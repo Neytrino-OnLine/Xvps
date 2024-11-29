@@ -1,6 +1,6 @@
 #!/bin/sh
 
-VERSION="alpha 7"
+VERSION="alpha 9"
 INBOUNDS='/opt/etc/xray/configs/03_inbounds.json'
 OUTBOUNDS='/opt/etc/xray/configs/04_outbounds.json'
 ROUTING='/opt/etc/xray/configs/05_routing.json'
@@ -1580,7 +1580,9 @@ function masterMenu
 	inbounds "2"
 	echo ""
 	read -n 1 -r -p "(Чтобы продолжить - нажмите любую клавишу...)" keypress
-	mainMenu
+	if [ ! "$1" = "1" ];then
+		mainMenu
+	fi
 	exit
 	}
 
@@ -1824,7 +1826,7 @@ case "$1" in
 	fi
 	;;
 
--m)	inbounds "2"
+-m)	masterMenu '1'
 	echo ""
 	read -n 1 -r -p "(Чтобы продолжить - нажмите любую клавишу...)" keypress
 	exit
@@ -1836,13 +1838,11 @@ case "$1" in
 	opkg remove wget-nossl
 	wget -O /tmp/xvps.sh https://raw.githubusercontent.com/Neytrino-OnLine/Xvps/refs/heads/main/xvps.sh
 	if [ ! "`cat "/tmp/xvps.sh" | grep -c 'function filterGet'`" -gt "0" ];then
-		echo ""
 		echo "Ошибка: проблемы со скачиванием файла..."
 	else
 		mv /tmp/xvps.sh /opt/bin/xvps
 		chmod +x /opt/bin/xvps
-		echo ""
-		echo "Обновление до Xvps `cat "/opt/bin/xvps" | grep '^VERSION="' | awk '{gsub(/VERSION="/,"")}1' | awk '{gsub(/"/,"")}1'` - выполнено."
+		echo "Сейчас установлен: Xvps `cat "/opt/bin/xvps" | grep '^VERSION="' | awk '{gsub(/VERSION="/,"")}1' | awk '{gsub(/"/,"")}1'`"
 	fi
 	exit
 	;;
