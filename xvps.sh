@@ -1,6 +1,6 @@
 #!/bin/sh
 
-VERSION="alpha 5"
+VERSION="alpha 7"
 INBOUNDS='/opt/etc/xray/configs/03_inbounds.json'
 OUTBOUNDS='/opt/etc/xray/configs/04_outbounds.json'
 ROUTING='/opt/etc/xray/configs/05_routing.json'
@@ -1827,6 +1827,23 @@ case "$1" in
 -m)	inbounds "2"
 	echo ""
 	read -n 1 -r -p "(Чтобы продолжить - нажмите любую клавишу...)" keypress
+	exit
+	;;
+
+-u)	clear
+	opkg update
+	opkg install ca-certificates wget-ssl
+	opkg remove wget-nossl
+	wget -O /tmp/xvps.sh https://raw.githubusercontent.com/Neytrino-OnLine/Xvps/refs/heads/main/xvps.sh
+	if [ ! "`cat "/tmp/xvps.sh" | grep -c 'function filterGet'`" -gt "0" ];then
+		echo ""
+		echo "Ошибка: проблемы со скачиванием файла..."
+	else
+		mv /tmp/xvps.sh /opt/bin/xvps
+		chmod +x /opt/bin/xvps
+		echo ""
+		echo "Обновление до Xvps `cat "/opt/bin/xvps" | grep '^VERSION="' | awk '{gsub(/VERSION="/,"")}1' | awk '{gsub(/"/,"")}1'` - выполнено."
+	fi
 	exit
 	;;
 
