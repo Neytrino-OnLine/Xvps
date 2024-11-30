@@ -1,10 +1,10 @@
 #!/bin/sh
 
-VERSION="alpha 9"
+VERSION="beta 1"
 INBOUNDS='/opt/etc/xray/configs/03_inbounds.json'
 OUTBOUNDS='/opt/etc/xray/configs/04_outbounds.json'
 ROUTING='/opt/etc/xray/configs/05_routing.json'
-OBSERVATORY='/opt/etc/xray/configs/Observatory.json'
+OBSERVATORY='/opt/etc/xray/configs/07_observatory.json'
 BUTTON='/opt/etc/ndm/button.d/xvps.sh'
 BACKUP='/opt/backup-xvps'
 
@@ -1495,25 +1495,28 @@ function buttonConfig
 		local TEXT='#!/opt/bin/sh\n\ncase "$button" in\n\n'
 		if [ -n "$WLAN" ];then
 			local TEXT=$TEXT'"WLAN")\n\tcase "$action" in\n'
+			WLAN=`echo -e $WLAN`
 			IFS=$'\t'
 			for LINE in $WLAN;do
-				local TEXT=$TEXT'\t"'`echo $LINE | awk '{sub(/&/,"\")\n\t\t")}1'`'\n\t\t;;\n' 
+				local TEXT=$TEXT'\t"'`echo $LINE | awk '{gsub(/&/,"\")\n\t\t")}1'`'\n\t\t;;\n' 
 			done
 			local TEXT=$TEXT'\tesac\n\t;;\n'
 		fi
 		if [ -n "$FN1" ];then
 			local TEXT=$TEXT'"FN1")\n\tcase "$action" in\n'
+			FN1=`echo -e $FN1`
 			IFS=$'\t'
 			for LINE in $FN1;do
-				local TEXT=$TEXT'\t"'`echo $LINE | awk '{sub(/&/,"\")\n\t\t")}1'`'\n\t\t;;\n' 
+				local TEXT=$TEXT'\t"'`echo $LINE | awk '{gsub(/&/,"\")\n\t\t")}1'`'\n\t\t;;\n' 
 			done
 			local TEXT=$TEXT'\tesac\n\t;;\n'
 		fi
 		if [ -n "$FN2" ];then
 			local TEXT=$TEXT'"FN2")\n\tcase "$action" in\n'
+			FN2=`echo -e $FN2`
 			IFS=$'\t'
 			for LINE in $FN2;do
-				local TEXT=$TEXT'\t"'`echo $LINE | awk '{sub(/&/,"\")\n\t\t")}1'`'\n\t\t;;\n' 
+				local TEXT=$TEXT'\t"'`echo $LINE | awk '{gsub(/&/,"\")\n\t\t")}1'`'\n\t\t;;\n' 
 			done
 			local TEXT=$TEXT'\tesac\n\t;;\n'
 		fi
@@ -1767,7 +1770,7 @@ function mainMenu
 		exit
 	else
 		echo ""
-		read -t 1 -n 1 -r -p " $VERSION                                              © 2024 rino Software Lab." keypress
+		read -t 1 -n 1 -r -p " $VERSION                                               © 2024 rino Software Lab." keypress
 		clear
 		exit
 	fi
@@ -1781,7 +1784,7 @@ case "$1" in
 	INBOUNDS='/opt/_xvps/03_inbounds.json'
 	OUTBOUNDS='/opt/_xvps/04_outbounds.json'
 	ROUTING='/opt/_xvps/05_routing.json'
-	OBSERVATORY='/opt/_xvps/Observatory.json'
+	OBSERVATORY='/opt/_xvps/07_observatory.json'
 	BUTTON='/opt/_xvps/button.d/xvps.sh'
 	BACKUP='/opt/_xvps/backup-xvps'
 	clear
@@ -1798,20 +1801,23 @@ case "$1" in
 	exit
 	;;
 
--i)	inbounds "1"
+-i)	MODE='                                                                             -i'
+	inbounds "1"
 	echo ""
 	read -n 1 -r -p "(Чтобы продолжить - нажмите любую клавишу...)" keypress
 	exit
 	;;
 
--o)	outbounds
+-o)	MODE='                                                                             -o'
+	outbounds '1'
 	echo ""
 	read -n 1 -r -p "(Чтобы продолжить - нажмите любую клавишу...)" keypress
 	exit
 	;;
 
--r)	if [ -f "$INBOUNDS" -a -f "$OUTBOUNDS" ];then
-		routing
+-r)	MODE='                                                                             -r'
+	if [ -f "$INBOUNDS" -a -f "$OUTBOUNDS" ];then
+		routing '1'
 		echo ""
 		read -n 1 -r -p "(Чтобы продолжить - нажмите любую клавишу...)" keypress
 		exit
@@ -1826,7 +1832,8 @@ case "$1" in
 	fi
 	;;
 
--m)	masterMenu '1'
+-m)	MODE='                                                                             -m'
+	masterMenu '1'
 	echo ""
 	read -n 1 -r -p "(Чтобы продолжить - нажмите любую клавишу...)" keypress
 	exit
