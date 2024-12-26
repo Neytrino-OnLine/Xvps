@@ -538,7 +538,7 @@ function inSelect
 	local LIST=`echo -e $IN_LIST`
 	echo ""
 	read -r -p "Введите один (или несколько, через пробел) идентификатор(ов) подключения:"
-	local READ=`echo $REPLY | awk '{sub(/ /,"\n")}1'`
+	local READ=`echo $REPLY | awk '{gsub(/ /,"\n")}1'`
 	IFS=$'\n'
 	for LIST_ID in $LIST;do
 		for READ_ID in $READ;do
