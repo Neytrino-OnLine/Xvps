@@ -1,12 +1,26 @@
 #!/bin/sh
 
-VERSION="beta 1"
+VERSION="beta 2"
 INBOUNDS='/opt/etc/xray/configs/03_inbounds.json'
 OUTBOUNDS='/opt/etc/xray/configs/04_outbounds.json'
 ROUTING='/opt/etc/xray/configs/05_routing.json'
 OBSERVATORY='/opt/etc/xray/configs/07_observatory.json'
 BUTTON='/opt/etc/ndm/button.d/xvps.sh'
 BACKUP='/opt/backup-xvps'
+
+function copyRight
+	{
+	local YEAR="2024"
+	if [ "`date +"%C%y"`" -gt "$YEAR" ];then
+		local YEAR="$YEAR-`date +"%C%y"`"
+	fi
+	local COPYRIGHT="© $YEAR rino Software Lab."
+	local COPY_LONG=`echo ${#COPYRIGHT}`
+	local VER_LONG=`echo ${#VERSION}`
+	local SPACE=`expr 80 - $VER_LONG - $COPY_LONG - 7`
+	local SPACE="`awk -v i=$SPACE 'BEGIN { OFS=" "; $i=" "; print }'`"
+	read -t 1 -n 1 -r -p " Xvps $VERSION$SPACE$COPYRIGHT" keypress
+	}
 
 function fileSave
 	{
@@ -561,7 +575,7 @@ function balancerSelect
 	echo ""
 	local LIST=`echo -e $OUT_LIST | grep -v "provider\|block"`
 	read -r -p "Введите два (или больше, через пробел) идентификатора(ов) подключений:"
-	local READ=`echo $REPLY | awk '{sub(/ /,"\n")}1'`
+	local READ=`echo $REPLY | awk '{gsub(/ /,"\n")}1'`
 	IFS=$'\n'
 	for LIST_ID in $LIST;do
 		for READ_ID in $READ;do
@@ -1770,7 +1784,8 @@ function mainMenu
 		exit
 	else
 		echo ""
-		read -t 1 -n 1 -r -p " $VERSION                                               © 2024 rino Software Lab." keypress
+		#read -t 1 -n 1 -r -p " $VERSION                                               © 2024 rino Software Lab." keypress
+		copyRight
 		clear
 		exit
 	fi
